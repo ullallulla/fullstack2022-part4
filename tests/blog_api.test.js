@@ -55,7 +55,7 @@ test('new blog can be added', async () => {
   expect(titles).toContain('newTitle')
 })
 
-test('new blog without likes will not be added', async () => {
+test('new blog without likes will default to 0 likes', async () => {
   const newBlog = {
     title: 'newTitle2',
     author: 'newAuthor2',
@@ -75,6 +75,21 @@ test('new blog without likes will not be added', async () => {
 
 })
 
+test('new blog without title or url will not be added', async () => {
+  const newBlog = {
+    author: 'newAuthor3',
+    likes: 20
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+
+})
 afterAll(() => {
   mongoose.connection.close()
 })
