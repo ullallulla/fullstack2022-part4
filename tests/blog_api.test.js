@@ -55,6 +55,25 @@ test('new blog can be added', async () => {
   expect(titles).toContain('newTitle')
 })
 
+test('new blog without likes will not be added', async () => {
+  const newBlog = {
+    title: 'newTitle2',
+    author: 'newAuthor2',
+    url: 'newUrl2'
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  const findBlogIndex = (blog) => blog.title === newBlog.title
+  const newBlogIndex = blogsAtEnd.findIndex(findBlogIndex)
+
+  expect(blogsAtEnd[newBlogIndex].likes).toBe(0)
+
+})
 
 afterAll(() => {
   mongoose.connection.close()
