@@ -34,6 +34,7 @@ test('unique identifier in the blog post is named id', async () => {
   expect(blogsInDb[0].id).toBeDefined()
 })
 
+
 test('new blog can be added', async () => {
   const newBlog = {
     title: 'newTitle',
@@ -74,21 +75,39 @@ test('new blog without likes will default to 0 likes', async () => {
   expect(blogsAtEnd[newBlogIndex].likes).toBe(0)
 
 })
+describe('invalid blogs are not created', () => {
+  test('new blog without title will not be added', async () => {
+    const newBlog = {
+      author: 'newAuthor3',
+      url: 'newUrl3',
+      likes: 20
+    }
 
-test('new blog without title or url will not be added', async () => {
-  const newBlog = {
-    author: 'newAuthor3',
-    likes: 20
-  }
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(400)
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
 
-  const blogsAtEnd = await helper.blogsInDb()
-  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+  })
+  test('new blog without url will not be added', async () => {
+    const newBlog = {
+      title: 'newTitle3',
+      author: 'newAuthor3',
+      likes: 20
+    }
 
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+
+  })
 })
 afterAll(() => {
   mongoose.connection.close()
