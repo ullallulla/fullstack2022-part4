@@ -4,10 +4,12 @@ const helper = require('./test_helper')
 const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 
 beforeEach(async () => {
   await Blog.deleteMany({})
+  await User.deleteMany({})
   console.log('cleared')
   for (let blog of helper.initialBlogs) {
     let blogObject = new Blog(blog)
@@ -42,9 +44,10 @@ test('new blog can be added', async () => {
     url: 'newUrl',
     likes: 2
   }
-
+  const token = await helper.getToken()
   await api
     .post('/api/blogs')
+    .set('Authorization', token)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -62,9 +65,10 @@ test('new blog without likes will default to 0 likes', async () => {
     author: 'newAuthor2',
     url: 'newUrl2'
   }
-
+  const token = await helper.getToken()
   await api
     .post('/api/blogs')
+    .set('Authorization', token)
     .send(newBlog)
     .expect(201)
 
@@ -82,9 +86,10 @@ describe('invalid blogs are not created', () => {
       url: 'newUrl3',
       likes: 20
     }
-
+    const token = await helper.getToken()
     await api
       .post('/api/blogs')
+      .set('Authorization', token)
       .send(newBlog)
       .expect(400)
 
@@ -98,11 +103,29 @@ describe('invalid blogs are not created', () => {
       author: 'newAuthor3',
       likes: 20
     }
+    const token = await helper.getToken()
+    await api
+      .post('/api/blogs')
+      .set('Authorization', token)
+      .send(newBlog)
+      .expect(400)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+
+  })
+  test('new blog without a token will not be added', async () => {
+    const newBlog = {
+      title: 'newTitle',
+      author: 'newAuthor',
+      url: 'newUrl',
+      likes: 2
+    }
 
     await api
       .post('/api/blogs')
       .send(newBlog)
-      .expect(400)
+      .expect(401)
 
     const blogsAtEnd = await helper.blogsInDb()
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
