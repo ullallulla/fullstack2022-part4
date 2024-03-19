@@ -1,10 +1,12 @@
+const { test, describe } = require('node:test')
+const assert = require('node:assert')
 const listHelper = require('../utils/list_helper')
 
 test('dummy returns one', () => {
   const blogs = []
 
   const result = listHelper.dummy(blogs)
-  expect(result).toBe(1)
+  assert.strictEqual(result, 1)
 })
 
 describe('total likes', () => {
@@ -74,17 +76,17 @@ describe('total likes', () => {
 
   test('of empty list is zero', () => {
     const result = listHelper.totalLikes(emptyBlogList)
-    expect(result).toBe(0)
+    assert.strictEqual(result, 0)
   })
 
   test('when list has only one blog, equals the likes of that', () => {
     const result = listHelper.totalLikes(listWithOneBlog)
-    expect(result).toBe(5)
+    assert.strictEqual(result, 5)
   })
 
   test('of a bigger list is calculated right', () => {
     const result = listHelper.totalLikes(blogs)
-    expect(result).toBe(36)
+    assert.strictEqual(result, 36)
   })
 })
 
@@ -142,7 +144,6 @@ describe('favorite blog', () => {
 
   test('when list has many blogs, find the one with most likes', () => {
     const result = listHelper.favoriteBlog(blogs)
-    console.log(result)
-    expect(result).toEqual(blogs[2])
+    assert.deepStrictEqual(result, blogs[2])
   })
 })
