@@ -1,3 +1,5 @@
+const { test, describe, after, beforeEach } = require('node:test')
+const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const helper = require('./test_helper')
@@ -27,13 +29,13 @@ test('correct amount of blogs are returned in JSON format', async () => {
     .expect(200)
     .expect('Content-Type', /application\/json/)
 
-  expect(response.body).toHaveLength(helper.initialBlogs.length)
+  assert.strictEqual(response.body.length, helper.initialBlogs.length)
 })
 
 test('unique identifier in the blog post is named id', async () => {
   const blogsInDb = await helper.blogsInDb()
-  console.log(blogsInDb)
-  expect(blogsInDb[0].id).toBeDefined()
+
+  assert.ok('id' in blogsInDb[0])
 })
 
 
@@ -53,10 +55,10 @@ test('new blog can be added', async () => {
     .expect('Content-Type', /application\/json/)
 
   const blogsAtEnd = await helper.blogsInDb()
-  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
 
   const titles = blogsAtEnd.map(b => b.title)
-  expect(titles).toContain('newTitle')
+  assert(titles.includes('newTitle'))
 })
 
 test('new blog without likes will default to 0 likes', async () => {
@@ -76,9 +78,9 @@ test('new blog without likes will default to 0 likes', async () => {
   const findBlogIndex = (blog) => blog.title === newBlog.title
   const newBlogIndex = blogsAtEnd.findIndex(findBlogIndex)
 
-  expect(blogsAtEnd[newBlogIndex].likes).toBe(0)
-
+  assert.strictEqual(blogsAtEnd[newBlogIndex].likes, 0)
 })
+
 describe('invalid blogs are not created', () => {
   test('new blog without title will not be added', async () => {
     const newBlog = {
@@ -94,9 +96,9 @@ describe('invalid blogs are not created', () => {
       .expect(400)
 
     const blogsAtEnd = await helper.blogsInDb()
-    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
-
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
   })
+
   test('new blog without url will not be added', async () => {
     const newBlog = {
       title: 'newTitle3',
@@ -111,7 +113,7 @@ describe('invalid blogs are not created', () => {
       .expect(400)
 
     const blogsAtEnd = await helper.blogsInDb()
-    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
 
   })
   test('new blog without a token will not be added', async () => {
@@ -128,10 +130,10 @@ describe('invalid blogs are not created', () => {
       .expect(401)
 
     const blogsAtEnd = await helper.blogsInDb()
-    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
-
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
   })
 })
-afterAll(() => {
+
+after(() => {
   mongoose.connection.close()
 })
