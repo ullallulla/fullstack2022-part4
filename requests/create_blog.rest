@@ -1,9 +1,10 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InZlaWtrbyIsImlkIjoiNjYwMWE1NDk5YmRlYjQ3OTdmMGJhNjQyIiwiaWF0IjoxNzExMzgzODkxLCJleHAiOjE3MTEzODc0OTF9.Gm8xr7XOQhYthrCrSM6JvyX9WlC7SQ6SNBBgGD7Kxtw
 
 {
-    "title": "blogi",
-    "author": "ulla",
+    "title": "blogi2",
+    "author": "ulla2",
     "url": "jotain",
     "likes": 1
 }
