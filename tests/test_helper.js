@@ -64,7 +64,7 @@ const getToken = async () => {
     .post('/api/login')
     .send({ username: 'jorkku', password: 'zxczxc' })
 
-  return `bearer ${response.body.token}`
+  return `Bearer ${response.body.token}`
 }
 
 module.exports = {
