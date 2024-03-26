@@ -8,7 +8,7 @@ const api = supertest(app)
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
-describe('when there is initially some notes saved', () => {
+describe('when there is initially some blogs saved', () => {
   beforeEach(async () => {
     await Blog.deleteMany({})
     console.log('cleared')
@@ -178,7 +178,7 @@ describe('when there is initially some notes saved', () => {
   })
 })
 
-describe('when there is initially one user at db', () => {
+describe('when there is initially two users at db', () => {
   beforeEach(async () => {
     await User.deleteMany({})
     console.log('cleared')
